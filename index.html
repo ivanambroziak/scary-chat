@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Чат з духом</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Чат з духом (демо)</title>
   <style>
     body {
       background-color: #0d0d0d;
@@ -58,7 +58,7 @@
 <body>
   <div id="chat"></div>
   <div id="inputBox">
-    <input type="text" id="userInput" placeholder="Напиши щось...">
+    <input type="text" id="userInput" placeholder="Напиши щось..." />
     <button id="sendBtn">Надіслати</button>
   </div>
 
@@ -67,32 +67,18 @@
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    async function sendMessage() {
-      const text = userInput.value.trim();
-      if (!text) return;
-
-      addMessage("user", text);
-      userInput.value = "";
-
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer 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",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "mistralai/mistral-7b-instruct",
-          messages: [
-            { role: "system", content: "Ти — зловісний дух, який спілкується моторошно, як з потойбіччя. Не розкривай, що ти штучний інтелект." },
-            { role: "user", content: text }
-          ]
-        })
-      });
-
-      const data = await response.json();
-      const aiMessage = data.choices?.[0]?.message?.content || "(Помилка відповіді)";
-      addMessage("ai", aiMessage);
-    }
+    const spookyReplies = [
+      "Ти чуєш тихий шепіт у темряві...",
+      "Вони дивляться на тебе крізь тінь.",
+      "Ти не повинен був це писати...",
+      "Двері закриються за тобою самі.",
+      "Твоя душа вже не твоя.",
+      "Щось нечисте близько...",
+      "Ти відчуваєш холод, який не має джерела.",
+      "Тінь рухається позаду тебе...",
+      "Вони знають, де ти живеш.",
+      "Світло згасає, і темрява палає.",
+    ];
 
     function addMessage(sender, text) {
       const msg = document.createElement("div");
@@ -100,6 +86,21 @@
       msg.textContent = text;
       chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      userInput.value = "";
+
+      // Вибираємо випадкову моторошну відповідь
+      const reply = spookyReplies[Math.floor(Math.random() * spookyReplies.length)];
+
+      setTimeout(() => {
+        addMessage("ai", reply);
+      }, 1000 + Math.random() * 2000); // затримка для ефекту
     }
 
     sendBtn.addEventListener("click", sendMessage);
