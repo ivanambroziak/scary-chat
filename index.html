@@ -1,0 +1,194 @@
+@@ -2,111 +2,92 @@
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Чат з духом (демо)</title>
+  <title>Простий чат</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #e0e0e0;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+    }
+    #chat {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      margin: 10px 0;
+    }
+    .user {
+      text-align: right;
+      color: #8ecae6;
+    }
+    .ai {
+      text-align: left;
+      color: #ff6b6b;
+    }
+    #inputBox {
+      display: flex;
+      border-top: 1px solid #333;
+    }
+    #userInput {
+      flex-grow: 1;
+      padding: 10px;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+    }
+    #sendBtn {
+      padding: 10px 20px;
+      background: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #sendBtn:hover {
+      background: #444;
+    }
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; padding: 20px; }
+    #chat { height: 300px; overflow-y: auto; border: 1px solid #555; padding: 10px; margin-bottom: 10px; background: #222; }
+    .message { margin-bottom: 8px; }
+    .user { color: #8ecae6; font-weight: bold; }
+    input, button { padding: 10px; font-size: 16px; }
+    input { width: 70%; }
+    button { width: 25%; background: #444; color: white; border: none; cursor: pointer; }
+    button:hover { background: #666; }
+  </style>
+
+  <!-- Firebase SDK (версія compat для простоти) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div id="chat"></div>
+  <div id="inputBox">
+    <input type="text" id="userInput" placeholder="Напиши щось..." />
+    <button id="sendBtn">Надіслати</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    const spookyReplies = [
+      "Ти чуєш тихий шепіт у темряві...",
+      "Вони дивляться на тебе крізь тінь.",
+      "Ти не повинен був це писати...",
+      "Двері закриються за тобою самі.",
+      "Твоя душа вже не твоя.",
+      "Щось нечисте близько...",
+      "Ти відчуваєш холод, який не має джерела.",
+      "Тінь рухається позаду тебе...",
+      "Вони знають, де ти живеш.",
+      "Світло згасає, і темрява палає.",
+    ];
+
+    function addMessage(sender, text) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      userInput.value = "";
+
+      // Вибираємо випадкову моторошну відповідь
+      const reply = spookyReplies[Math.floor(Math.random() * spookyReplies.length)];
+
+      setTimeout(() => {
+        addMessage("ai", reply);
+      }, 1000 + Math.random() * 2000); // затримка для ефекту
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+
+<h1>Чат з подругою</h1>
+
+<div id="chat"></div>
+
+<input type="text" id="username" placeholder="Твоє ім'я" />
+<br><br>
+<input type="text" id="messageInput" placeholder="Напиши повідомлення..." />
+<button id="sendBtn">Відправити</button>
+
+<script>
+  // Твоя Firebase конфігурація
+  const firebaseConfig = {
+    apiKey: "AIzaSyBEEfn7xzGqKa1Cq9KOeeDXv836wMreFrA",
+    authDomain: "scary-72f98.firebaseapp.com",
+    databaseURL: "https://scary-72f98-default-rtdb.firebaseio.com",
+    projectId: "scary-72f98",
+    storageBucket: "scary-72f98.appspot.com",
+    messagingSenderId: "450754639280",
+    appId: "1:450754639280:web:5550f2cfeb4aac1f0e1275",
+    measurementId: "G-6FKRD4WWHG"
+  };
+
+  // Ініціалізуємо Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const chat = document.getElementById('chat');
+  const usernameInput = document.getElementById('username');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  // Відправка повідомлення у базу
+  sendBtn.onclick = () => {
+    const username = usernameInput.value.trim() || "Анонім";
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    // Створюємо нове повідомлення у базі
+    const newMsgKey = db.ref().child('messages').push().key;
+
+    db.ref('messages/' + newMsgKey).set({
+      user: username,
+      text: message,
+      timestamp: Date.now()
+    });
+
+    messageInput.value = '';
+  };
+
+  // Відображення повідомлень з бази у реальному часі
+  db.ref('messages').on('value', snapshot => {
+    chat.innerHTML = '';
+    const messages = snapshot.val();
+    if (!messages) return;
+
+    // Сортуємо по часу (timestamp)
+    const sortedMessages = Object.values(messages).sort((a, b) => a.timestamp - b.timestamp);
+
+    sortedMessages.forEach(msg => {
+      const div = document.createElement('div');
+      div.classList.add('message');
+      div.innerHTML = `<span class="user">${msg.user}:</span> ${msg.text}`;
+      chat.appendChild(div);
+    });
+  </script>
+
+    chat.scrollTop = chat.scrollHeight;
+  });
+</script>
+
+</body>
+</html>
